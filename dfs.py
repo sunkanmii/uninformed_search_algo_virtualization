@@ -79,7 +79,7 @@ def animate(frame):
     plotTitle = plotTitle + ", " + visited[i]
   
   # set figure title
-  fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
+  fig.suptitle("DFS: [%s"%(plotTitle) + "]", fontweight="bold")
   
   if finalAnswer[frame] not in linked_edges and frame < len(finalAnswer):
     i = 1
@@ -97,7 +97,7 @@ def animate(frame):
   node_color_list[list(g.nodes).index(int(visited[frame]))] = "grey"
   if frame == len(finalAnswer) - 1:
     node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
-    fig.suptitle("BFS: [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
+    fig.suptitle("dFS: [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
     
   
   nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)

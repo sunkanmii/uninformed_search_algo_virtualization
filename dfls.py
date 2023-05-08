@@ -19,16 +19,34 @@ graph = {
 
 # Using a Python dictionary to act as an adjacency list
 visited = [] # Set to keep track of visited nodes of graph.
+node_with_levels = {}
 
-def dfs(visited, graph, node):  #function for dfs 
+def getNodeLevels():
+  level = 1
+  for node in graph:
+    if node not in node_with_levels:
+      node_with_levels[node] = level
+    for neighbour in graph[node]:
+      level = node_with_levels[node] + 1
+      if neighbour not in node_with_levels:
+        node_with_levels[neighbour] = level
+              
+getNodeLevels()
+
+def dfls(visited, graph, node, limit):  #function for dfs 
   if node not in visited:
     print (node)
     visited.append(node)
     for neighbour in graph[node]:
-      dfs(visited, graph, neighbour)
+      if int(node_with_levels[neighbour]) == limit+1:
+        continue
+      dfls(visited, graph, neighbour, limit)
+    # Limit
+    
+limit = 2    
 print("Following is the Depth-First Search")
-dfs(visited, graph, '5')
-
+dfls(visited, graph, '5', limit)
+print(node_with_levels)
 # list of set
 finalAnswer = []
 
@@ -41,7 +59,6 @@ makeVistedNodeSet()
 
 fig = plt.figure()
 g = nx.Graph()
-
 
 linked_edges = []
 
@@ -79,7 +96,7 @@ def animate(frame):
     plotTitle = plotTitle + ", " + visited[i]
   
   # set figure title
-  fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
+  fig.suptitle("DFLS(Level Limit:" + str(limit) + ": [%s"%(plotTitle) + "]", fontweight="bold")
   
   if finalAnswer[frame] not in linked_edges and frame < len(finalAnswer):
     i = 1
@@ -87,7 +104,7 @@ def animate(frame):
     
     if finalAnswer[frame] not in linked_edges:
       finalAnswer[frame] = (list(finalAnswer[frame])[1], list(finalAnswer[frame])[0])
-      while finalAnswer[frame] not in linked_edges and i < frame:
+      while finalAnswer[frame] not in linked_edges and i <= frame:
         finalAnswer[frame] = (list(finalAnswer[frame-i])[0], list(finalAnswer[frame])[1])
         i = i + 1
   
@@ -97,8 +114,7 @@ def animate(frame):
   node_color_list[list(g.nodes).index(int(visited[frame]))] = "grey"
   if frame == len(finalAnswer) - 1:
     node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
-    fig.suptitle("BFS: [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
-    
+    fig.suptitle("DFLS(Level Limit - " + str(limit) + " ): [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
   
   nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
