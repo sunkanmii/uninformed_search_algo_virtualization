@@ -64,25 +64,33 @@ addGraphNodes()
 pos = nx.spring_layout(g)
 
 edge_color_list = ["grey"]*len(g.edges)
-
+node_color_list = ["lightblue"]*len(g.nodes)
 print(g.edges)
 
-# nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list)
+nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
 # animate graph
 def animate(frame):
     plotTitle = ""
     if frame == 0:
-        plotTitle = visited[0] + ""
-        fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
+      for i in range(len(edge_color_list)):
+        edge_color_list[i] = "grey"
+        node_color_list[i] = "lightblue"
         
-    for i in range(frame):
-        plotTitle = plotTitle + visited[i] + ", "
+    for i in range(frame+1):
+      if i == 0:
+        plotTitle = plotTitle + visited[i]
+        continue
+      plotTitle = plotTitle + ", " + visited[i]
     
     fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
     
-    edge_color_list[frame] = "red"
-    nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list)
+    if frame > 0 and frame != len(edge_color_list):
+      edge_color_list[frame-1] = "red"
+    else:
+      edge_color_list[frame] = "red"
+    node_color_list[frame] = "grey"
+    nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
-anim = animation.FuncAnimation(fig, animate, frames=len(linked_edges), interval=1000)
+anim = animation.FuncAnimation(fig, animate, frames=len(linked_edges), interval=1000, repeat=True)
 plt.show()

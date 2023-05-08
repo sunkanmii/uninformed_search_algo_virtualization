@@ -57,16 +57,31 @@ addGraphNodes()
 pos = nx.spring_layout(g)
 
 edge_color_list = ["grey"]*len(g.edges)
-
-edge_color_list[0] = "red"
+node_color_list = ["lightblue"]*len(g.nodes)
 
 print(g.edges)
 
-nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list)
+nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
 # animate graph
 def animate(frame):
-  if finalAnswer[frame] not in linked_edges:
+  plotTitle = ""
+  
+  if frame == 0:
+    for i in range(len(edge_color_list)):
+      edge_color_list[i] = "grey"
+      node_color_list[i] = "lightblue"
+      
+  for i in range(frame+1):
+    if i == 0:
+      plotTitle = plotTitle + visited[i]
+      continue
+    plotTitle = plotTitle + ", " + visited[i]
+  
+  # set figure title
+  fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
+  
+  if finalAnswer[frame] not in linked_edges and frame < len(finalAnswer):
     i = 1
     finalAnswer[frame] = (list(finalAnswer[frame])[1], list(finalAnswer[frame])[0])
     
@@ -75,9 +90,17 @@ def animate(frame):
       while finalAnswer[frame] not in linked_edges and i < frame:
         finalAnswer[frame] = (list(finalAnswer[frame-i])[0], list(finalAnswer[frame])[1])
         i = i + 1
-
+  
   edge_color_list[linked_edges.index(finalAnswer[frame])] = "red"
-  nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list)
+  
+  
+  node_color_list[list(g.nodes).index(int(visited[frame]))] = "grey"
+  if frame == len(finalAnswer) - 1:
+    node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
+    fig.suptitle("BFS: [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
+    
+  
+  nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
 anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)
 plt.show()
