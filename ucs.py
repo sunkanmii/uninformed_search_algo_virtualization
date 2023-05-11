@@ -120,6 +120,6 @@ if __name__ == '__main__':
     answer = uniform_cost_search(goal, 0)
  
     # print the answer
-    print("Minimum cost from 0 to 6 is = ",answer[0])
+    print("Minimum cost from 0 to 6 is = ", answer[0])
  
 # This code is contributed by mohit kumar 29

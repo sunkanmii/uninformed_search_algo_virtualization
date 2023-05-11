@@ -22,7 +22,8 @@ visited = [] # Set to keep track of visited nodes of graph.
 node_with_levels = {}
 
 def getNodeLevels():
-  level = 1
+  # level starts from zero
+  level = 0
   for node in graph:
     if node not in node_with_levels:
       node_with_levels[node] = level
@@ -33,19 +34,19 @@ def getNodeLevels():
               
 getNodeLevels()
 
-def dfls(visited, graph, node, limit):  #function for dfs 
+def dls(visited, graph, node, limit):  #function for dfs 
   if node not in visited:
     print (node)
     visited.append(node)
     for neighbour in graph[node]:
       if int(node_with_levels[neighbour]) == limit+1:
         continue
-      dfls(visited, graph, neighbour, limit)
+      dls(visited, graph, neighbour, limit)
     # Limit
     
-limit = 2    
+limit = 1    
 print("Following is the Depth-First Search")
-dfls(visited, graph, '5', limit)
+dls(visited, graph, '5', limit)
 print(node_with_levels)
 # list of set
 finalAnswer = []
@@ -96,7 +97,7 @@ def animate(frame):
     plotTitle = plotTitle + ", " + visited[i]
   
   # set figure title
-  fig.suptitle("DFLS(Level Limit:" + str(limit) + ": [%s"%(plotTitle) + "]", fontweight="bold")
+  fig.suptitle("DLS(Level Limit - " + str(limit) + " ): [%s"%(plotTitle) + "]", fontweight="bold")
   
   if finalAnswer[frame] not in linked_edges and frame < len(finalAnswer):
     i = 1
@@ -114,7 +115,7 @@ def animate(frame):
   node_color_list[list(g.nodes).index(int(visited[frame]))] = "grey"
   if frame == len(finalAnswer) - 1:
     node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
-    fig.suptitle("DFLS(Level Limit - " + str(limit) + " ): [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
+    fig.suptitle("DLS(Level Limit - " + str(limit) + " ): [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
   
   nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 

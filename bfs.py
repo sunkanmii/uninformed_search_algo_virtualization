@@ -14,20 +14,22 @@ graph = {
   '7' : ['8'],
   '2' : [],
   '4' : ['8'],
-  '8' : []
+  '8' : ['9'],
+  '9' : []
 }
 
 visited = [] # List to keep track of visited nodes.
 queue = []     #Initialize a queue
+parent = {}
 
 def bfs(visited, graph, node):
   visited.append(node)
   queue.append(node)
 
   while queue:
-    s = queue.pop(0) 
-    print (s, end = " ") 
-
+    s = queue.pop(0)
+    print (s, end = " ")
+    
     for neighbour in graph[s]:
       if neighbour not in visited:
         visited.append(neighbour)
@@ -43,7 +45,7 @@ def makeVistedNodeSet():
   newVisited = list(visited)
   for i in range(1, len(newVisited)):
     finalAnswer.append((int(newVisited[i-1]), int(newVisited[i])))
-
+    
 makeVistedNodeSet()
 
 fig = plt.figure()
@@ -85,7 +87,7 @@ def animate(frame):
     
     fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
     
-    if frame > 0 and frame != len(edge_color_list):
+    if frame > 0 and frame < len(edge_color_list) - 1:
       edge_color_list[frame-1] = "red"
     else:
       edge_color_list[frame] = "red"
