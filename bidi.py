@@ -88,7 +88,7 @@ def bidirectional(graph, direction):
         if neighbour not in forward_visited:
           forward_visited.append(neighbour)
           forward_queue.append(neighbour)
-          finalNodesForward.append((s, neighbour))
+          finalNodesForward.append((int(s), int(neighbour)))
           
           ind = ind + 1
         
@@ -107,7 +107,7 @@ def bidirectional(graph, direction):
       for parentNode in parent[s]:
         backward_queue.append(parentNode)
         backward_visited.append(parentNode)
-        finalNodesBackward.append((parentNode, s))
+        finalNodesBackward.append((int(parentNode), int(s)))
 
 bidirectional(graph, "forwards")
 bidirectional(graph, "backwards")
@@ -146,63 +146,72 @@ nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_
 
 # animate graph
 def animate(frame):
-    plotTitle = ""
-    if frame == 0:
-      for i in range(len(edge_color_list)):
-        edge_color_list[i] = "grey"
-        node_color_list[i] = "lightblue"
-    
-    forwardNode = ""
-    backwardNode = ""
-    indexForBackward = 0
-    indexForForward = 0
-    
-    maxLengthForForwardNodes = frame if frame < len(finalNodesForward) else len(finalNodesForward)
-    maxLengthForBackwardNodes = frame if frame < len(finalNodesBackward) else len(finalNodesBackward)
-    
-    # forward nodes
-    while(i < maxLengthForBackwardNodes):
-      if indexForForward == 0:
-        forwardNode = forwardNode + finalNodesForward[i]
-        continue
+  plotTitle = ""
+  if frame == 0:
+    for i in range(len(edge_color_list)):
+      edge_color_list[i] = "grey"
+    for i in range(len(node_color_list)):
+      node_color_list[i] = "lightblue"
       
-      forwardNode = forwardNode + ", " + finalNodesForward[i]
-      
-      # color nodes
-      node_color_list[list(g.nodes).index(int(forward_visited[i]))] = "grey"
-      edge_color_list[linked_edges.index(finalNodesForward[i])] = "red"
-      
-      # color intersection
-      if forward_visited[i] == midLevelNode:
-        node_color_list[list(g.nodes).index(int(forward_visited[i]))] = "red"
-      
-    # backward nodes
-    while(indexForBackward < maxLengthForBackwardNodes):
-      if indexForBackward == 0:
-        backwardNode = backwardNode + finalNodesBackward[i]
-        continue
-      backwardNode = backwardNode + ", " + finalNodesBackward[i]
-      
-      # color nodes
-      node_color_list[list(g.nodes).index(int(backward_visited[i]))] = "grey"
-      edge_color_list[linked_edges.index(finalNodesBackward[i])] = "red"
-      
-      # color intersection
-      if forward_visited[i] == midLevelNode:
-        node_color_list[list(g.nodes).index(int(backward_visited[i]))] = "red"
+  forwardNode = ""
+  backwardNode = ""
+  indexForBackward = 0
+  indexForForward = 0
+  
+  maxLengthForForwardNodes = frame if frame < len(finalNodesForward) else len(finalNodesForward)
+  maxLengthForBackwardNodes = frame if frame < len(finalNodesBackward) else len(finalNodesBackward)
+  
+  # forward nodes
+  while(indexForForward < maxLengthForForwardNodes):
+    if indexForForward == 0:
+      forwardNode = forwardNode + forward_visited[indexForForward]
+      node_color_list[list(g.nodes).index(int(forward_visited[indexForForward]))] = "grey"
+      edge_color_list[linked_edges.index(finalNodesForward[indexForForward])] = "red"
+      indexForForward = indexForForward + 1
+      continue
     
-    # combine the two
-    for i in range(frame+1):
-      if i == 0:
-        plotTitle = plotTitle + forwardNode + ", " + backwardNode
-        continue
-      plotTitle = plotTitle + forwardNode + ", " + backwardNode
+    forwardNode = forwardNode + ", " + forward_visited[indexForForward]
     
-    fig.suptitle("BIDI: [%s"%(plotTitle) + "]", fontweight="bold")
+    # color nodes
+    node_color_list[list(g.nodes).index(int(forward_visited[indexForForward]))] = "grey"
+    edge_color_list[linked_edges.index(finalNodesForward[indexForForward])] = "red"
     
-    node_color_list[list(g.nodes).index()] = "grey"
+    # color intersection
+    if forward_visited[indexForForward+1] == midLevelNode:
+      node_color_list[list(g.nodes).index(int(forward_visited[indexForForward+1]))] = "red"
     
-    nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+    indexForForward = indexForForward + 1
+    
+  # backward nodes
+  while(indexForBackward < maxLengthForBackwardNodes):
+    if indexForBackward == 0:
+      backwardNode = backwardNode + backward_visited[indexForBackward]
+      node_color_list[list(g.nodes).index(int(backward_visited[indexForBackward]))] = "grey"
+      edge_color_list[linked_edges.index(finalNodesBackward[indexForBackward])] = "red"
+      indexForBackward = indexForBackward + 1
+      continue
+    backwardNode = backwardNode + ", " + backward_visited[indexForBackward]
+    
+    # color nodes
+    node_color_list[list(g.nodes).index(int(backward_visited[indexForBackward]))] = "grey"
+    edge_color_list[linked_edges.index(finalNodesBackward[indexForBackward])] = "red"
+    
+    # color intersection
+    if backward_visited[indexForBackward] == midLevelNode:
+      node_color_list[list(g.nodes).index(int(backward_visited[indexForBackward+1]))] = "red"
 
-anim = animation.FuncAnimation(fig, animate, frames=len(linked_edges), interval=1000, repeat=True)
+    indexForBackward = indexForBackward + 1
+  
+  # combine the two
+  # for i in range(frame):
+  #   if i == 0:
+  #     plotTitle = plotTitle + forwardNode + ", " + backwardNode
+  #     continue
+  plotTitle = plotTitle + forwardNode + ", " + backwardNode
+  
+  fig.suptitle("BIDI: [%s"%(plotTitle) + "]", fontweight="bold")
+  
+  nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+
+anim = animation.FuncAnimation(fig, animate, frames=len(finalNodesForward) + len(finalNodesBackward), interval=1000, repeat=True)
 plt.show()
