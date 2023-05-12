@@ -19,8 +19,8 @@ graph = {
   '8' : ['7']
 }
 
-# Using a Python dictionary to act as an adjacency list
-visited = [] # Set to keep track of visited nodes of graph.
+visited = [] 
+stack = []
 node_with_levels = {}
 
 def getNodeLevels():
@@ -40,17 +40,25 @@ foundNodeList = []
 
 #function for dls with start and goal node
 def dls(visited, graph, node, goal_node, foundGoalNode, limit):   
-  if node not in visited:
-    print (node)
-    visited.append(node)
-    if goal_node == node:
+  visited.append(node)
+  stack.append(node)
+  
+  while len(stack) != 0:
+    s = stack.pop(-1)
+    
+    if goal_node == s:
       foundNodeList.append(True)
-    for next in graph[node]:
+    
+    for next in graph[s]:
       if len(foundNodeList) != 0:
         continue
+      
       if int(node_with_levels[next]) == limit+1:
         continue
-      dls(visited, graph, next, goal_node, foundGoalNode, limit)
+      
+      if next not in visited:
+        stack.append(next)
+        dls(visited, graph, next, goal_node, foundGoalNode, limit)
         
     # Limit
     

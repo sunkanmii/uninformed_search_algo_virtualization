@@ -18,8 +18,13 @@ graph = {
   '7' : []
 }
 
-# Using a Python dictionary to act as an adjacency list
-visited = [] # Set to keep track of visited nodes of graph.
+visited = [] 
+
+stack = []
+
+# list of set
+finalAnswer = []
+
 node_with_levels = {}
 
 def getNodeLevels():
@@ -37,31 +42,29 @@ getNodeLevels()
 
 # Depth Limited Search Function
 def dls(visited, graph, node, limit):  #function for dfs 
-  if node not in visited:
-    
-    visited.append(node)
-    
-    for next in graph[node]:
+  visited.append(node)
+  stack.append(node)
+  
+  while len(stack) != 0:
+    s = stack.pop(-1)
+  
+    for next in graph[s]:
+      # Limit added
       if int(node_with_levels[next]) == limit+1:
         continue
-      # Limit added
-      dls(visited, graph, next, limit)
+      
+      if node not in visited or next not in visited:
+        finalAnswer.append((int(node), int(next)))
+      
+      if next not in visited:
+        stack.append(next)
+        dls(visited, graph, next, limit)
     
-limit = 1 
+limit = 2 
 print("Following is the Depth limited Search")
 dls(visited, graph, '1', limit)
 
 print(node_with_levels)
-
-# list of set
-finalAnswer = []
-
-def makeVistedNodeSet():
-  newVisited = list(visited)
-  for i in range(1, len(newVisited)):
-    finalAnswer.append((int(newVisited[i-1]), int(newVisited[i])))
-
-makeVistedNodeSet()
 
 fig = plt.figure()
 g = nx.Graph()
