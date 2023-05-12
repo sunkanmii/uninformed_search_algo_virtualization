@@ -7,14 +7,15 @@ from matplotlib import pyplot as plt, animation
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
-# DFS
+# Graph
 graph = {
-  '5' : ['3','7'],
-  '3' : ['2', '4'],
-  '7' : ['8'],
-  '2' : [],
-  '4' : ['8'],
-  '8' : []
+  '1' : ['2','3'],
+  '2' : ['4', '5'],
+  '3' : ['6'],
+  '4' : ['5'],
+  '5' : ['6'],
+  '6' : ['7'],
+  '7' : []
 }
 
 # Using a Python dictionary to act as an adjacency list
@@ -27,27 +28,31 @@ def getNodeLevels():
   for node in graph:
     if node not in node_with_levels:
       node_with_levels[node] = level
-    for neighbour in graph[node]:
+    for next in graph[node]:
       level = node_with_levels[node] + 1
-      if neighbour not in node_with_levels:
-        node_with_levels[neighbour] = level
+      if next not in node_with_levels:
+        node_with_levels[next] = level
               
 getNodeLevels()
 
+# Depth Limited Search Function
 def dls(visited, graph, node, limit):  #function for dfs 
   if node not in visited:
-    print (node)
+    
     visited.append(node)
-    for neighbour in graph[node]:
-      if int(node_with_levels[neighbour]) == limit+1:
+    
+    for next in graph[node]:
+      if int(node_with_levels[next]) == limit+1:
         continue
-      dls(visited, graph, neighbour, limit)
-    # Limit
+      # Limit added
+      dls(visited, graph, next, limit)
     
 limit = 1    
-print("Following is the Depth-First Search")
-dls(visited, graph, '5', limit)
+print("Following is the Depth limited Search")
+dls(visited, graph, '1', limit)
+
 print(node_with_levels)
+
 # list of set
 finalAnswer = []
 

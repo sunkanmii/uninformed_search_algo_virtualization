@@ -7,38 +7,40 @@ from matplotlib import pyplot as plt, animation
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
-# BFS
+# Graph
 graph = {
-  '5' : ['3','7'],
-  '3' : ['2', '4'],
-  '7' : ['8'],
-  '2' : [],
-  '4' : ['8'],
-  '8' : ['9'],
-  '9' : []
+  '1' : ['2','3'],
+  '2' : ['4', '5'],
+  '3' : ['6'],
+  '4' : ['5'],
+  '5' : ['6'],
+  '6' : ['7'],
+  '7' : []
 }
 
-visited = [] # List to keep track of visited nodes.
-queue = []     #Initialize a queue
+# Visited node list
+visited = []
+
+# Data Structure for bfs
+queue = []
 parent = {}
 
 def bfs(visited, graph, node):
   visited.append(node)
   queue.append(node)
 
-  while queue:
+  while len(queue) != 0:
     s = queue.pop(0)
-    print (s, end = " ")
     
-    for neighbour in graph[s]:
-      if neighbour not in visited:
-        visited.append(neighbour)
-        queue.append(neighbour)
+    for next in graph[s]:
+      if next not in visited:
+        visited.append(next)
+        queue.append(next)
 
-# Driver Code
-bfs(visited, graph, '5')
 
-# list of set
+bfs(visited, graph, '1')
+
+# list of sets of con
 finalAnswer = []
 
 def makeVistedNodeSet():

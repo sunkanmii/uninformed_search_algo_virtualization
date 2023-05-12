@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt, animation
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
-# BFS
+# Graph
 graph = {
   '5' : ['3','7'],
   '3' : ['2', '4'],
@@ -27,10 +27,10 @@ def getNodeLevels():
   for node in graph:
     if node not in node_with_levels:
       node_with_levels[node] = level
-    for neighbour in graph[node]:
+    for next in graph[node]:
       level = node_with_levels[node] + 1
-      if neighbour not in node_with_levels:
-        node_with_levels[neighbour] = level
+      if next not in node_with_levels:
+        node_with_levels[next] = level
 
 getNodeLevels()
 
@@ -54,12 +54,12 @@ def bfs(visited, graph, node):
   while queue:
     s = queue.pop(0)
     print (s, end = " ")
-    for neighbour in graph[s]:
-      if neighbour not in visited:
-        visited.append(neighbour)
-        queue.append(neighbour)
+    for next in graph[s]:
+      if next not in visited:
+        visited.append(next)
+        queue.append(next)
         # node: parent format
-      parent[neighbour] = s
+      parent[next] = s
 
 # Driver Code
 bfs(visited, graph, '5')
@@ -84,11 +84,11 @@ def bidirectional(graph, direction):
       if s == midLevelNode:
         break
       
-      for neighbour in graph[s]:
-        if neighbour not in forward_visited:
-          forward_visited.append(neighbour)
-          forward_queue.append(neighbour)
-          finalNodesForward.append((int(s), int(neighbour)))
+      for next in graph[s]:
+        if next not in forward_visited:
+          forward_visited.append(next)
+          forward_queue.append(next)
+          finalNodesForward.append((int(s), int(next)))
           
           ind = ind + 1
         

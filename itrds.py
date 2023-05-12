@@ -7,16 +7,16 @@ from matplotlib import pyplot as plt, animation
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
-# DFS
+# Graph
 graph = {
-  '5' : ['3','7'],
-  '3' : ['2', '4'],
-  '7' : ['8'],
-  '2' : [],
-  '4' : ['8'],
-  '8' : [],
-  '9': ['8'],
-  '10': ['8']
+  '1' : ['2','3'],
+  '2' : ['4', '5'],
+  '3' : ['6'],
+  '4' : ['5'],
+  '5' : ['6'],
+  '6' : ['7'],
+  '7' : ['4'],
+  '8' : ['7']
 }
 
 # Using a Python dictionary to act as an adjacency list
@@ -29,33 +29,32 @@ def getNodeLevels():
   for node in graph:
     if node not in node_with_levels:
       node_with_levels[node] = level
-    for neighbour in graph[node]:
+    for next in graph[node]:
       level = node_with_levels[node] + 1
-      if neighbour not in node_with_levels:
-        node_with_levels[neighbour] = level
+      if next not in node_with_levels:
+        node_with_levels[next] = level
               
 getNodeLevels()
 
 foundNodeList = []
-def dls(visited, graph, node, goal_node, foundGoalNode, limit):  #function for dfs 
+
+#function for dls with start and goal node
+def dls(visited, graph, node, goal_node, foundGoalNode, limit):   
   if node not in visited:
     print (node)
     visited.append(node)
     if goal_node == node:
       foundNodeList.append(True)
-    for neighbour in graph[node]:
+    for next in graph[node]:
       if len(foundNodeList) != 0:
         continue
-      if int(node_with_levels[neighbour]) == limit+1:
+      if int(node_with_levels[next]) == limit+1:
         continue
-      dls(visited, graph, neighbour, goal_node, foundGoalNode, limit)
+      dls(visited, graph, next, goal_node, foundGoalNode, limit)
         
     # Limit
     
-limit = 2
-print("Following is the Depth-First Search")
-# dls(visited, graph, '5', '8', limit)
-print(node_with_levels)
+limit = 3
 
 
 # Iterative Deepening Search Python
@@ -63,16 +62,18 @@ def iterDeepSearch(src, target, maxDepth):
   # Repeatedly depth-limit search till the
   # maximum depth
   for i in range(maxDepth+1):
-    visited.clear()
     if (len(foundNodeList) == 0):
+      visited.clear()
       dls(visited, graph, src, target, False, i)
-    
+    else:
+      break
   if len(foundNodeList) != 0:
     return True
   return False
 
-end_node = '8'
-foundNode = iterDeepSearch('5', end_node, limit)
+# Node we're looking for
+end_node = '6'
+foundNode = iterDeepSearch(list(graph.keys())[0], end_node, limit)
 
 # list of set
 finalAnswer = []
@@ -114,6 +115,7 @@ def animate(frame):
   if frame == 0:
     for i in range(len(edge_color_list)):
       edge_color_list[i] = "grey"
+    for i in range(len(node_color_list)):
       node_color_list[i] = "lightblue"
       
   for i in range(frame+1):
@@ -142,14 +144,21 @@ def animate(frame):
   node_color_list[indexOfNodeInGraph] = "grey"
   
   if frame == len(finalAnswer) - 1:
-    node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
+    # node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
     fig.suptitle("Iter Deepening Search (\nLevel Limit - " + str(limit) + " \nGoal Node: "+ end_node + " ): [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
   
   if list(g.nodes)[list(g.nodes).index(int(visited[frame]))] == int(end_node) and foundNode:
     node_color_list[list(g.nodes).index(int(visited[frame]))] = "red"
+    edge_color_list[linked_edges.index(finalAnswer[frame])] = "red"
+    
     
   if frame == len(finalAnswer) - 1 and foundNode and list(g.nodes)[list(g.nodes).index(int(visited[frame+1]))] == int(end_node):
     node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "red"
+    edge_color_list[linked_edges.index(finalAnswer[frame])+1] = "red"
+    # reset what was set
+    edge_color_list[linked_edges.index(finalAnswer[frame])] = "grey"
+    node_color_list[indexOfNodeInGraph] = "grey"
+  
   nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
 
 anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)

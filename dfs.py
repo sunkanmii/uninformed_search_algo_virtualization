@@ -7,27 +7,29 @@ from matplotlib import pyplot as plt, animation
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
-# DFS
+# Graph
 graph = {
-  '5' : ['3','7'],
-  '3' : ['2', '4'],
-  '7' : ['8'],
-  '2' : [],
-  '4' : ['8'],
-  '8' : []
+  '1' : ['2','3'],
+  '2' : ['4', '5'],
+  '3' : ['6'],
+  '4' : ['5'],
+  '5' : ['6'],
+  '6' : ['7'],
+  '7' : []
 }
 
-# Using a Python dictionary to act as an adjacency list
-visited = [] # Set to keep track of visited nodes of graph.
+# Visited node list
+visited = [] 
 
+# uses recursion to search to the deepest part of the node
 def dfs(visited, graph, node):  #function for dfs 
   if node not in visited:
-    print (node)
+    
     visited.append(node)
-    for neighbour in graph[node]:
-      dfs(visited, graph, neighbour)
+    for next in graph[node]:
+      dfs(visited, graph, next)
 print("Following is the Depth-First Search")
-dfs(visited, graph, '5')
+dfs(visited, graph, '1')
 
 # list of set
 finalAnswer = []
@@ -45,6 +47,7 @@ g = nx.Graph()
 
 linked_edges = []
 
+# Links graph nodes together
 def addGraphNodes():
   for key in graph:
     for i in range(len(graph[key])):
