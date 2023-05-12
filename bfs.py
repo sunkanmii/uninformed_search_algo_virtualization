@@ -25,6 +25,9 @@ visited = []
 queue = []
 parent = {}
 
+# list of sets of con
+finalAnswer = []
+
 def bfs(visited, graph, node):
   visited.append(node)
   queue.append(node)
@@ -36,19 +39,17 @@ def bfs(visited, graph, node):
       if next not in visited:
         visited.append(next)
         queue.append(next)
+        finalAnswer.append((int(s), int(next)))
 
 
 bfs(visited, graph, '1')
 
-# list of sets of con
-finalAnswer = []
-
-def makeVistedNodeSet():
-  newVisited = list(visited)
-  for i in range(1, len(newVisited)):
-    finalAnswer.append((int(newVisited[i-1]), int(newVisited[i])))
+# def makeVistedNodeSet():
+#   newVisited = list(visited)
+#   for i in range(1, len(newVisited)):
+#     finalAnswer.append((int(newVisited[i-1]), int(newVisited[i])))
     
-makeVistedNodeSet()
+# makeVistedNodeSet()
 
 fig = plt.figure()
 g = nx.Graph()
@@ -71,17 +72,20 @@ edge_color_list = ["grey"]*len(g.edges)
 node_color_list = ["lightblue"]*len(g.nodes)
 print(g.edges)
 
-nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list, arrows=True, arrowstyle= '-|>', arrowsize= 12)
 
 # animate graph
 def animate(frame):
     plotTitle = ""
+    
+    
     if frame == 0:
       for i in range(len(edge_color_list)):
         edge_color_list[i] = "grey"
+      for i in range(len(node_color_list)):
         node_color_list[i] = "lightblue"
         
-    for i in range(frame+1):
+    for i in range(frame + 1 if frame <= len(node_color_list) else -1):
       if i == 0:
         plotTitle = plotTitle + visited[i]
         continue
@@ -89,12 +93,15 @@ def animate(frame):
     
     fig.suptitle("BFS: [%s"%(plotTitle) + "]", fontweight="bold")
     
-    if frame > 0 and frame < len(edge_color_list) - 1:
-      edge_color_list[frame-1] = "red"
-    else:
-      edge_color_list[frame] = "red"
-    node_color_list[frame] = "grey"
-    nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+    getSet = linked_edges.index(finalAnswer[frame])
+    edge_color_list[getSet] = "red"
+    node_color_list[frame if frame < len(node_color_list) else -1] = "grey"
+    
+    if frame == len(finalAnswer) - 1:
+      node_color_list[-1] = "grey"
+      fig.suptitle("BFS: [%s"%(plotTitle) + ", " + str(list(g.nodes)[-1]) + "]", fontweight="bold")
+      
+    nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list, arrows=True, arrowstyle= '-|>', arrowsize= 12)
 
-anim = animation.FuncAnimation(fig, animate, frames=len(linked_edges), interval=1000, repeat=True)
+anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)
 plt.show()

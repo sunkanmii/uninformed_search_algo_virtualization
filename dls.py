@@ -47,7 +47,7 @@ def dls(visited, graph, node, limit):  #function for dfs
       # Limit added
       dls(visited, graph, next, limit)
     
-limit = 1    
+limit = 1 
 print("Following is the Depth limited Search")
 dls(visited, graph, '1', limit)
 
@@ -84,7 +84,7 @@ node_color_list = ["lightblue"]*len(g.nodes)
 
 print(g.edges)
 
-nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list, arrows=True, arrowstyle= '-|>', arrowsize= 12)
 
 # animate graph
 def animate(frame):
@@ -93,6 +93,7 @@ def animate(frame):
   if frame == 0:
     for i in range(len(edge_color_list)):
       edge_color_list[i] = "grey"
+    for i in range(len(node_color_list)):
       node_color_list[i] = "lightblue"
       
   for i in range(frame+1):
@@ -122,7 +123,7 @@ def animate(frame):
     node_color_list[list(g.nodes).index(int(visited[frame+1]))] = "grey"
     fig.suptitle("DLS(Level Limit - " + str(limit) + " ): [%s"%(plotTitle + ", " + visited[frame+1]) + "]", fontweight="bold")
   
-  nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list)
+  nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list, arrows=True, arrowstyle= '-|>', arrowsize= 12)
 
 anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)
 plt.show()
