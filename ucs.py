@@ -1,125 +1,198 @@
+# importing networkx
+import networkx as nx
 
-# Python3 implementation of above approach
- 
-# returns the minimum cost in a vector( if
-# there are multiple goal states)
-def  uniform_cost_search(goal, start):
-     
-    # minimum cost upto
-    # goal state from starting
-    global graph,cost
+# importing matplotlib.pyplot
+from matplotlib import pyplot as plt, animation
+
+plt.rcParams["figure.figsize"] = [7.50, 6.50]
+plt.rcParams["figure.autolayout"] = True
+
+# Graph
+graph = {
+    "1": ["2", "3"],
+    "2": ["4", "5"],
+    "3": ["6"],
+    "4": ["5", "7"],
+    "5": ["6"],
+    "6": ["7"],
+    "7": []
+}
+
+# cost for each traversal from node to node
+cost = {
+    ('1', '2'): 2, 
+    ('1', '3'): 1, 
+    ('2', '4'): 5, ('2', '5'): 3, ('3', '6'): 1, ('4', '5'): 2, ('4', '7'): 4, ('5', '6'): 4, ('6', '7'): 1}
+
+# Visited node list
+visited = []
+
+# Data Structure for bfs
+queue = []
+
+
+# parent of each node
+parent = {}
+
+# list of sets of con
+finalAnswer = []
+
+# Goal Node
+goalNode = '7'
+
+def ucs(visited, queue, graph, node, goalNode):
+    queue.append([0, node])
+    
+    # answer for node with minimum cost
     answer = []
- 
-    # create a priority queue
-    queue = []
- 
-    # set the answer vector to max value
-    for i in range(len(goal)):
-        answer.append(10**8)
- 
-    # insert the starting index
-    queue.append([0, start])
- 
-    # map to store visited node
-    visited = {}
- 
-    # count
-    count = 0
- 
-    # while the queue is not empty
-    while (len(queue) > 0):
- 
-        # get the top element of the
+
+    answer.append(10**8)
+
+    while len(queue) != 0:
+        # Adds priority by sorting
         queue = sorted(queue)
-        p = queue[-1]
- 
-        # pop the element
-        del queue[-1]
- 
-        # get the original value
-        p[0] *= -1
- 
-        # check if the element is part of
-        # the goal list
-        if (p[1] in goal):
- 
+
+        s = queue.pop()
+
+        s[0] *= -1
+
+        # count
+        count = 0
+
+        if s[1] in goalNode:
             # get the position
-            index = goal.index(p[1])
- 
+            index = goalNode.index(s[1])
+
             # if a new goal is reached
-            if (answer[index] == 10**8):
+            if answer[index] == 10**8:
                 count += 1
- 
+
             # if the cost is less
-            if (answer[index] > p[0]):
-                answer[index] = p[0]
- 
+            if answer[index] > s[0]:
+                answer[index] = s[0]
+
             # pop the element
-            del queue[-1]
- 
+            queue.pop()
+            
+            # pop last node as it's repeated
+            visited.pop()
+            
+            # append goal node since it's reached
+            visited.append(goalNode)
             queue = sorted(queue)
-            if (count == len(goal)):
-                return answer
- 
-        # check for the non visited nodes
-        # which are adjacent to present node
-        if (p[1] not in visited):
-            for i in range(len(graph[p[1]])):
- 
-                # value is multiplied by -1 so that
-                # least priority is at the top
-                queue.append( [(p[0] + cost[(p[1], graph[p[1]][i])])* -1, graph[p[1]][i]])
- 
-        # mark as visited
-        visited[p[1]] = 1
- 
+            
+            if count == len(goalNode):
+                return answer       
+
+        if s[1] not in visited:
+            
+            for next in graph[s[1]]:
+                queue.append(
+                    [(s[0] + cost[(s[1], next)]) * -1, next]
+                )    
+            
+            visited.append(s[1])
+
     return answer
+
+goalNodeReached = ucs(visited, queue, graph, "1", goalNode)
+
+def makeVistedNodeSet():
+    newVisited = list(visited)
+    for i in range(1, len(newVisited)):
+        finalAnswer.append((int(newVisited[i-1]), int(newVisited[i])))
+    
+makeVistedNodeSet()
+
+fig = plt.figure()
+g = nx.Graph()
+
+linked_edges = []
+
+def addGraphNodes():
+    for key in graph:
+        for i in range(len(graph[key])):
+            # add graph edges with weights
+            g.add_edge(int(key), int(graph[key][i]), weight=cost[(key, graph[key][i])])
+            linked_edges.append((int(key), int(graph[key][i])))
+
+addGraphNodes()
+
+# Set position of graph nodes g
+pos = nx.spring_layout(g)
+
+edge_color_list = ["grey"] * len(g.edges)
+node_color_list = ["lightblue"] * len(g.nodes)
+labels = nx.get_edge_attributes(g,'weight')
+
+print(g.edges)
+
+nx.draw(
+    g,
+    pos=pos,
+    with_labels=True,
+    node_size=1000,
+    edge_color=edge_color_list,
+    node_color=node_color_list,
+    arrows=True,
+    arrowstyle="-|>",
+    arrowsize=12,
+)
+nx.draw_networkx_edge_labels(g, pos=pos, edge_labels=labels)
+
+
+# animate graph
+def animate(frame):
+    plotTitle = ""
+
+    if frame == 0:
+        for i in range(len(edge_color_list)):
+            edge_color_list[i] = "grey"
+        for i in range(len(node_color_list)):
+            node_color_list[i] = "lightblue"
+
+    for i in range(frame + 1 if frame <= len(node_color_list) else -1):
+        if i == 0:
+            plotTitle = plotTitle + visited[i]
+            continue
+        plotTitle = plotTitle + ", " + visited[i]
  
-# main function
-if __name__ == '__main__':
-     
-    # create the graph
-    graph,cost = [[] for i in range(8)],{}
- 
-    # add edge
-    graph[0].append(1)
-    graph[0].append(3)
-    graph[3].append(1)
-    graph[3].append(6)
-    graph[3].append(4)
-    graph[1].append(6)
-    graph[4].append(2)
-    graph[4].append(5)
-    graph[2].append(1)
-    graph[5].append(2)
-    graph[5].append(6)
-    graph[6].append(4)
- 
-    # add the cost
-    cost[(0, 1)] = 2
-    cost[(0, 3)] = 5
-    cost[(1, 6)] = 1
-    cost[(3, 1)] = 5
-    cost[(3, 6)] = 6
-    cost[(3, 4)] = 2
-    cost[(2, 1)] = 4
-    cost[(4, 2)] = 4
-    cost[(4, 5)] = 3
-    cost[(5, 2)] = 6
-    cost[(5, 6)] = 3
-    cost[(6, 4)] = 7
- 
-    # goal state
-    goal = []
- 
-    # set the goal
-    # there can be multiple goal states
-    goal.append(6)
- 
-    # get the answer
-    answer = uniform_cost_search(goal, 0)
- 
-    # print the answer
-    print("Minimum cost from 0 to 6 is = ", answer[0])
- 
-# This code is contributed by mohit kumar 29
+    totalEdgeWeight = g.edges[finalAnswer[0]]["weight"]
+    
+    for i in range(frame):
+        totalEdgeWeight = totalEdgeWeight + g.edges[finalAnswer[i]]["weight"]
+
+    fig.suptitle("UCS: [%s" % (plotTitle) + "]\n Total Cost = " + str(totalEdgeWeight) + "\n Goal Node = " + goalNode, fontweight="bold")
+
+    getSet = linked_edges.index(finalAnswer[frame])
+    edge_color_list[getSet] = "red"
+    node_color_list[list(g.nodes).index(int(visited[frame]))] = "grey"
+    
+    
+    if frame == len(finalAnswer) - 1:
+        node_color_list[-1] = "grey"
+        fig.suptitle(
+            "UCS: [%s" % (plotTitle) + ", " + str(list(g.nodes)[-1]) + "]\n Total Cost = " + str(totalEdgeWeight) + "\n Goal Node = " + goalNode, 
+            fontweight="bold",
+        )
+
+    
+    
+    nx.draw(
+        g,
+        pos=pos,
+        with_labels=True,
+        node_size=1000,
+        edge_color=edge_color_list,
+        node_color=node_color_list,
+        arrows=True,
+        arrowstyle="-|>",
+        arrowsize=12
+    )
+    nx.draw_networkx_edge_labels(g, pos=pos, edge_labels=labels)
+
+
+anim = animation.FuncAnimation(
+    fig, animate, frames=len(finalAnswer), interval=1000, repeat=True
+)
+plt.show()

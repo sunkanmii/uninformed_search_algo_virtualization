@@ -20,8 +20,9 @@ graph = {
 
 # Visited node list
 visited = []
+# stack
 stack = []
-# list of set
+# list of connected nodes placed in a set
 finalAnswer = []
 
 # uses recursion to search to the deepest part of the node
@@ -116,4 +117,3 @@ def animate(frame):
 
 anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)
 plt.show()
-

@@ -169,5 +169,5 @@ def animate(frame):
   
   nx.draw(g, pos=pos, with_labels = True, node_size=1000, edge_color = edge_color_list, node_color=node_color_list, arrows=True, arrowstyle= '-|>', arrowsize= 12)
 
-anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=1000, repeat=True)
+anim = animation.FuncAnimation(fig, animate, frames=len(finalAnswer), interval=850, repeat=True)
 plt.show()
